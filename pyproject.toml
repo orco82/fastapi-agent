@@ -40,6 +40,7 @@ dependencies = [
 Homepage = "https://github.com/orco82/fastapi-agent"
 Repository = "https://github.com/orco82/fastapi-agent"
 Documentation = "https://github.com/orco82/fastapi-agent#readme"
+"Bug Tracker" = "https://github.com/orco82/fastapi-agent/issues"
 
 [tool.hatch.version]
 path = "fastapi_agent/__init__.py"
