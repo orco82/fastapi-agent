@@ -1,30 +1,23 @@
 import asyncio
 
-from gen_ai_hub.proxy.native.openai import AsyncOpenAI
-from pydantic_ai.models.openai import OpenAIModel
-from pydantic_ai.providers.openai import OpenAIProvider
+from dotenv import load_dotenv
 
 from examples.pydantic_ai_tools import register_tools
 from fastapi_agent.agents import DEFAULT_PROMPT, AIAgent, PydanticAIAgent  # noqa: F401
 
-client = AsyncOpenAI(api_version="2024-10-21")
-provider = OpenAIProvider(openai_client=client)
-model = OpenAIModel(
-    "gpt-4o",
-    provider=provider,
-)
+load_dotenv()
 
 ## Option #1
 ## Create agent with generic AI Agent
 agent = AIAgent.create(
-    model=model,
+    model="openai:gpt-4",
     provider="pydantic_ai"
 )
 
 ## Option #2
 ## create agent with pydantic_ai agent model
 # agent = PydanticAIAgent(
-#     model=model,
+#     model="openai:gpt-4",
 #     prompt=DEFAULT_PROMPT
 # )
 
@@ -34,9 +27,11 @@ register_tools(agent)
 async def main(questions):
     history = []
     for q in questions:
+        print(f"\nQ: {q}")
         res, h = await agent.chat(q, history)
-        print(f"\n{res}")
+        print(f"A: {res}")
         history = h
+
 
 if __name__ == "__main__":
     questions = [

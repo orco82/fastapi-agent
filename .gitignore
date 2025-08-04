@@ -27,4 +27,4 @@ venv.bak/
 *.swo
 *~
 
-upload.txt
+*.txt

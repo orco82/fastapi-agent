@@ -53,7 +53,7 @@ class FastAPIAgent(FastAPIDiscovery):
         **kwargs,
     ):
         """
-        Initialize the FastAPI AI agent with app context, routing configuration, model settings, and agent provider name.
+        Initialize the FastAPI Agent with app context, routing configuration, Model settings, and agent provider name.
 
         Args:
             app (FastAPI): The FastAPI application instance to extract route information from.
