@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fastapi-agent"
+dynamic = ["version"]
+description = "Add an AI Agent to your FastAPI application. The agent knows how to interact with your endpoints within a chat interface."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{ name = "Or Cohen", email = "orco82@gmail.com" }]
+keywords = ["fastapi", "ai", "agent", "chat", "api"]
+
+classifiers = [ 
+    "Development Status :: 3 - Alpha", 
+    "Intended Audience :: Developers", 
+    "Framework :: FastAPI", 
+    "Framework :: Pydantic", 
+    "Programming Language :: Python", 
+    "Programming Language :: Python :: 3", 
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12", 
+    "Programming Language :: Python :: 3.13", 
+    "License :: OSI Approved :: MIT License", 
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "fastapi>=0.116.1",
+    "generative-ai-hub-sdk>=3.8.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.11.7",
+    "pydantic-ai>=0.4.7",
+    "uvicorn>=0.35.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/orco82/fastapi-agent"
+Repository = "https://github.com/orco82/fastapi-agent"
+Documentation = "https://github.com/orco82/fastapi-agent#readme"
+
+[tool.hatch.version]
+path = "fastapi_agent/__init__.py"
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors.
+    "W",  # pycodestyle warnings.
+    "F",  # pyflakes.
+    "C",  # flake8-comprehensions.
+    "B",  # flake8-bugbear.
+]
+ignore = [
+    "E501",  # line too long, handled by black.
+    "B904",  # raise without from inside except
+    "B008",  # do not perform function calls in argument defaults.
+]
