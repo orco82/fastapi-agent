@@ -14,7 +14,7 @@ class PydanticAIAgent(BaseAgent):
 
     def __init__(
         self,
-        model_name: str = "openai:gpt-4o",
+        model_name: str = "openai:gpt-4.1-mini",
         model: Optional[Model] = None,
         prompt: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
@@ -23,7 +23,7 @@ class PydanticAIAgent(BaseAgent):
         Initialize the AI assistant with an optional custom model and system prompt.
 
         Args:
-            model_name (str): The model identifier string in the format 'provider:model-id' (e.g., 'openai:gpt-4o'). Used if `model` is not provided.
+            model_name (str): The model identifier string in the format 'provider:model-id' (e.g., 'openai:gpt-4.1-mini'). Used if `model` is not provided.
             model (Optional[Model]): A fully initialized Model instance. If provided, this will be used instead of creating one from `model_name`.
             prompt (Optional[str]): A custom system prompt string. If not provided, a default prompt from AIAgent.
             logger (Optional[logging.Logger]): add logger

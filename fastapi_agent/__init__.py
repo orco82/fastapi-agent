@@ -1,6 +1,6 @@
 """FastAPI Agent - Interact with your endpoints using an AI-based chat interface."""
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 from .agents import AIAgent, PydanticAIAgent
 from .fastapi_agent import FastAPIAgent

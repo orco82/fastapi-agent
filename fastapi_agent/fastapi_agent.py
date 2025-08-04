@@ -46,7 +46,7 @@ class FastAPIAgent(FastAPIDiscovery):
         base_url: str = "http://localhost:8000",
         deps: Optional[dict] = None,
         ignore_routes: Optional[list] = None,
-        model: Union[Model, str] = "openai:gpt-4",
+        model: Union[Model, str] = "openai:gpt-4.1-mini",
         agent_provider: str = "pydantic_ai",
         include_router: bool = False,
         logger: Optional[logging.Logger] = None,
@@ -65,7 +65,7 @@ class FastAPIAgent(FastAPIDiscovery):
             ignore_routes (Optional[list]): List of route paths to ignore when building the route prompt context.
             include_router (bool): add ai agent route to your FastAPI app. Defaults to False
             model (Union[Model, str]): A custom Model instance or model name string in the format "provider:model-id".
-                                       If not provided, Defaults to "openai:gpt-4".
+                                       If not provided, Defaults to "openai:gpt-4.1-mini".
             agent_provider (str): The name of which agent to use. Defailts to "pydantic_ai".
                                   supported agents: ["pydantic_ai"]
 

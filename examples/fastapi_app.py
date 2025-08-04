@@ -8,6 +8,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
+from pydantic_ai.models.openai import OpenAIModel  # noqa: F401
 
 from fastapi_agent import FastAPIAgent
 
@@ -129,7 +130,7 @@ if __name__ == "__main__":
     # create the FastAPI Agent instance
     agent = FastAPIAgent(
         app,
-        model="openai:gpt-4",
+        model="openai:gpt-4.1-mini",
     )
     app.include_router(agent.router)
 

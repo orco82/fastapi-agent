@@ -52,7 +52,7 @@ async def root():
 # add the FastAPI Agent + default routes
 FastAPIAgent(
     app,
-    model="openai:gpt-4",
+    model="openai:gpt-4.1-mini",
     base_url="http://localhost:8000",
     include_router=True,
 )
@@ -89,7 +89,7 @@ api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 FastAPIAgent(
     app,
-    model="openai:gpt-4",
+    model="openai:gpt-4.1-mini",
     base_url="https://localhost:8000",
     deps={"api-key": api_key},
     include_router=True,
@@ -104,7 +104,7 @@ You can also pass the `ignore_routes` argument to prevent the agent from accessi
 
 FastAPIAgent(
     app,
-    model="openai:gpt-4",
+    model="openai:gpt-4.1-mini",
     base_url="https://localhost:8000",
     ignore_routes=["/user/delete/{user_id}"],
     include_router=True,
