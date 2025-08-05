@@ -83,11 +83,12 @@ curl -k -X POST "http://127.0.0.1:8000/agent/query" \
 
 <br>
 
-> 💡 _You can also add custom routes using agent.chat() methode - [Example](https://github.com/orco82/fastapi-agent/blob/main/examples/3_fastapi_agent_example.py)_
+> 💡 _You can also add custom routes using agent.chat() method - [Example](https://github.com/orco82/fastapi-agent/blob/main/examples/3_fastapi_agent_example.py)_
  
 <br>
 
 ## 🧩 Additional Arguments:
+
 If your application routes use **Depends** (e.g., an API key), you can pass a dictionary of headers.  
 The agent will use them to call your routes and apply the same dependencies to the `/agent/query` route.
 
@@ -105,7 +106,7 @@ FastAPIAgent(
 
 ---
 
-You can control which routes the agent can access using the ignore_routes or allow_routes arguments:
+You can control which routes the agent can access using the `ignore_routes` or `allow_routes` arguments:
  - Use `ignore_routes` to exclude specific routes from being accessible to the agent.
  - Use `allow_routes` to restrict the agent to only the specified routes.
 

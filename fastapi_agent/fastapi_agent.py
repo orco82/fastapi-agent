@@ -44,11 +44,13 @@ class FastAPIAgent(FastAPIDiscovery):
         self,
         app: FastAPI,
         base_url: str = "http://localhost:8000",
-        deps: Optional[dict] = None,
+        depends: Optional[dict] = None,
         ignore_routes: Optional[list] = None,
+        allow_routes: Optional[list] = None,
         model: Union[Model, str] = "openai:gpt-4.1-mini",
         agent_provider: str = "pydantic_ai",
         include_router: bool = False,
+        logo_url: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
         **kwargs,
     ):
@@ -59,15 +61,17 @@ class FastAPIAgent(FastAPIDiscovery):
             app (FastAPI): The FastAPI application instance to extract route information from.
             base_url (str): The base URL of the FastAPI application for documentation and interaction.
                             Defaults to "http://localhost:8000".
-            deps (Optional[dict]): Optional dictionary of dependencies or external components relevant to the API.
+            depends (Optional[dict]): Optional dictionary of dependencies or external components relevant to the API.
                                    Support for API with token keys passed in the Headers.
                                    It will also add the dependencies to the /agent/query route.
             ignore_routes (Optional[list]): List of route paths to ignore when building the route prompt context.
+            allow_routes (Optional[list]): List of route paths to allow when building the route prompt context.
             include_router (bool): add ai agent route to your FastAPI app. Defaults to False
             model (Union[Model, str]): A custom Model instance or model name string in the format "provider:model-id".
                                        If not provided, Defaults to "openai:gpt-4.1-mini".
             agent_provider (str): The name of which agent to use. Defailts to "pydantic_ai".
                                   supported agents: ["pydantic_ai"]
+            logo_url (Optional[str]): Replace FastAPI Agent logo in the chat UI with this logo_url
 
         Kwargs:
             debug (bool): set log level to DEBUG. Default INFO
@@ -82,13 +86,18 @@ class FastAPIAgent(FastAPIDiscovery):
         super().__init__(
             app=app,
             base_url=base_url,
-            deps=deps,
+            depends=depends,
             ignore_routes=ignore_routes,
+            allow_routes=allow_routes,
             logger=self.logger,
         )
 
         self.model = model
         self.agent_provider = agent_provider
+        self.logo_url = (
+            logo_url
+            or "https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png"
+        )
         self.default_prompt_rule = (
             "Follow those main instruction:\n"
             " - You are an AI agent assistant that interacts exclusively with a FastAPI application.\n"
@@ -200,8 +209,8 @@ class FastAPIAgent(FastAPIDiscovery):
             "You can use the api_request tool to execute call to an API endpoint\n\n"
             "Always be helpful and explain what you're doing step by step.\n\n"
         )
-        if self.deps is not None:
-            additional_rules += f"The following dependencies are already included: {self.deps.keys()}\n\n"
+        if self.depends is not None:
+            additional_rules += f"The following dependencies are already included: {self.depends.keys()}\n\n"
 
         return self.default_prompt_rule + api_context_prompt + additional_rules
 
@@ -223,20 +232,22 @@ class FastAPIAgent(FastAPIDiscovery):
     #         # allow_headers=["*"],
     #     )
 
-    async def verify_dependencies(self, deps: str = Header(...)):
+    async def verify_dependencies(self, depends: str = Header(...)):
         self.logger.info("checking dependencies...")
-        _deps = json.loads(deps)
-        if _deps != self.deps:
-            raise HTTPException(status_code=401, detail=f"Could not validate {_deps}")
+        _depends = json.loads(depends)
+        if _depends != self.depends:
+            raise HTTPException(
+                status_code=401, detail=f"Could not validate {_depends}"
+            )
 
     def get_agent_router(self):
         agent_router = APIRouter(prefix="/agent", tags=["AI Agent"])
 
-        if self.deps is not None:
+        if self.depends is not None:
 
             @agent_router.post("/query", response_model=AgentResponse)
             async def query_ai_agent(
-                request: AgentQuery, deps: str = Depends(self.verify_dependencies)
+                request: AgentQuery, depends: str = Depends(self.verify_dependencies)
             ):
                 """
                 Ask the AI agent about available API endpoints and how to use them.
@@ -294,16 +305,29 @@ class FastAPIAgent(FastAPIDiscovery):
             import os
 
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(current_dir, "templates", "chat.html")
-
-            with open(file_path, "r", encoding="utf-8") as f:
+            html_path = os.path.join(current_dir, "chat_ui", "index.html")
+            with open(html_path, "r", encoding="utf-8") as f:
                 html_content = f.read()
 
-            # Replace placeholder with actual base URL
+            css_path = os.path.join(current_dir, "chat_ui", "styles.css")
+            with open(css_path, "r", encoding="utf-8") as f:
+                css_content = f.read()
+            html_content = html_content.replace("/*{{CSS}}*/", css_content)
+
+            js_path = os.path.join(current_dir, "chat_ui", "script.js")
+            with open(js_path, "r", encoding="utf-8") as f:
+                js_content = f.read()
+            html_content = html_content.replace("/*{{JAVASCRIPT}}*/", js_content)
+
+            # Replace placeholders
+            if self.logo_url:
+                html_content = html_content.replace("{{LOGO_URL}}", self.logo_url)
             html_content = html_content.replace("{{API_BASE_URL}}", self.base_url)
             html_content = html_content.replace("{{APP_TITLE}}", self.app.title)
-            if self.deps is not None:
-                html_content = html_content.replace("{{DEPS}}", json.dumps(self.deps))
+            if self.depends is not None:
+                html_content = html_content.replace(
+                    "{{DEPENDS}}", json.dumps(self.depends)
+                )
 
             return html_content
 

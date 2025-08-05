@@ -33,23 +33,27 @@ class FastAPIDiscovery:
         app (FastAPI): The FastAPI application instance to extract route information from.
         base_url (str): The base URL of the FastAPI application for documentation and interaction.
                         Defaults to "http://localhost:8000".
-        deps (Optional[dict]): Optional dictionary of dependencies or external components relevant to the API.
+        depends (Optional[dict]): Optional dictionary of dependencies or external components relevant to the API.
                                 Support for API with token keys passed in the Headers.
         ignore_routes (Optional[list]): List of route paths to ignore when building the route prompt context.
+        allow_routes (Optional[list]): List of route paths to allow when building the route prompt context.
     """
+
     def __init__(
         self,
         app: FastAPI,
         base_url: str = "http://localhost:8000",
-        deps: Optional[dict] = None,
+        depends: Optional[dict] = None,
         ignore_routes: Optional[list] = None,
+        allow_routes: Optional[list] = None,
         logger: Optional[logging.Logger] = None,
     ):
         self.app = app
         self.base_url = base_url.rstrip("/")
-        self.deps = deps
-        self.header_deps = {}
+        self.depends = depends
+        self.header_depends = {}
         self.ignore_routes = ignore_routes or []
+        self.allow_routes = allow_routes or []
 
         if logger is None:
             logger = logging.getLogger(__name__)
@@ -66,19 +70,34 @@ class FastAPIDiscovery:
 
         for route in self.app.routes:
             if isinstance(route, APIRoute):
-                if route.path in self.ignore_routes:
+                method_path = []
+                for method in route.methods:
+                    method_path.append(f"{str(method)}:{str(route.path)}")
+
+                # Check if any of the method_path items are in ignore_routes
+                if any(mp in self.ignore_routes for mp in method_path):
                     continue
+
+                # Check if allow_routes is set and none of the method_path items are in allow_routes
+                if self.allow_routes and not any(mp in self.allow_routes for mp in method_path):
+                    continue
+
+                # if route.path in self.ignore_routes:
+                #     continue
+
+                # if self.allow_routes and route.path not in self.allow_routes:
+                #     continue
 
                 route_info = self._extract_route_info(route)
                 if route_info:
                     self.routes_info.append(route_info)
 
-                if self.deps:
-                    for deps in self.deps:
-                        if re.sub(r"[-_]", " ", deps) in [
+                if self.depends:
+                    for depends in self.depends:
+                        if re.sub(r"[-_]", " ", depends) in [
                             re.sub(r"[-_]", " ", d.name) for d in route_info.headers
                         ]:
-                            self.header_deps.update({deps: self.deps[deps]})
+                            self.header_depends.update({depends: self.depends[depends]})
                         # TODO: add support for other depends like qurey
 
     def _extract_route_info(self, route: APIRoute) -> Optional[RouteInfo]:
@@ -222,12 +241,12 @@ class FastAPIDiscovery:
         """Execute a route with given parameters"""
         url = f"{self.base_url}{path}"
         headers_data = kwargs.pop("header", {})
-        headers_data.update(self.header_deps)
+        headers_data.update(self.header_depends)
         json_data = kwargs.pop("data", None)
 
         self.logger.debug(f" URL: {url}")
         self.logger.debug(f" Method: {method}")
-        self.logger.debug(f" Header Deps: {self.header_deps}")
+        self.logger.debug(f" Header Depends: {self.header_depends}")
         self.logger.debug(f" Headers: {headers_data}")
         self.logger.debug(f" Data: {json_data}")
         self.logger.debug(f" Params: {kwargs}")

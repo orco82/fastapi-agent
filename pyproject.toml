@@ -55,6 +55,7 @@ select = [
 ]
 ignore = [
     "E501",  # line too long, handled by black.
+    "C901",  # is too compex.
     "B904",  # raise without from inside except
     "B008",  # do not perform function calls in argument defaults.
 ]
