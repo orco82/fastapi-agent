@@ -1,22 +1,31 @@
+<div align="denter">
+
 ![FastAPI Agent Logo](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png)
 
-> <p style="padding:10px;font-size:18px"> 💬 Talk to your FastAPI app like it's a teammate. </p>
+</div>
 
 ---
+
+<p align="center" style="padding:10px;font-size:16px"> 💬 Talk to your FastAPI app like it's a teammate.</p>
+
+<br>
 
 FastAPI Agent integrates an AI Agent into your FastAPI application.
 It allows you to interact with your API endpoints through a chat interface or directly via the `/agent/query` route using an LLM (Large Language Model).
 
-<br>
+![fastapi screenshot](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-screenshot.png)
 
 ## ⚙️ Installation:
 
 To install the package, run:
 ```bash
+# install with pip
 pip install fastapi_agent
+
+# install with uv
+uv add fastapi_agent
 ```
 
-<br>
 
 ## 🧪 Usage:
 
@@ -62,10 +71,10 @@ FastAPIAgent(
     include_router=True,
 )
 
+# run FastAPI
 uvicorn.run(app, host="0.0.0.0", port=8000)
 ```
 
-<br>
 
 ## 🧭 Default Routes
 
@@ -81,11 +90,14 @@ curl -k -X POST "http://127.0.0.1:8000/agent/query" \
 
 2. **`/agent/chat`** – A simple web-based chat interface to interact with your API. 💬
 
-<br>
-
-> 💡 _You can also add custom routes using agent.chat() method - [Example](https://github.com/orco82/fastapi-agent/blob/main/examples/3_fastapi_agent_example.py)_
+> #### 💡 You can also add custom routes using agent.chat() method - [Example](https://github.com/orco82/fastapi-agent/blob/main/examples/3_fastapi_agent_example.py)
  
-<br>
+
+## 💬 AI Chat - Web UI
+When you integrate **FastAPI Agent** into your FastAPI application, it automatically adds a new endpoint at `/agent/chat`, which provides a minimal chat interface to interact with your API.
+
+![fastapi demo](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-demo.gif)
+
 
 ## 🧩 Additional Arguments:
 
@@ -122,7 +134,6 @@ FastAPIAgent(
 )
 ```
 
-<br>
 
 ## 📁 Additional Examples:
 
@@ -133,7 +144,7 @@ All examples are available [here](https://github.com/orco82/fastapi-agent/blob/m
 
 ---
 
-#### If you're using *Depends* in your routes, make sure to pass the required headers when calling the `/agent/query` endpoint like the examples below:
+#### If you're using *Depends* in your routes, make sure to pass the required headers when calling the `/agent/query` endpoint like in the examples below:
 
 #### python
 ```python
@@ -155,7 +166,6 @@ curl -k -X POST "http://127.0.0.1:8000/agent/query" \
   -d '{"query": "show all endpoints"}'
 ```
 
-<br>
 
 ## 📜 License
 
