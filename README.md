@@ -1,9 +1,9 @@
-# 🤖 FastAPI Agent
+![FastAPI Agent Logo](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png)
 
-> 💬 **Talk to your FastAPI app like it's a teammate.**
+> <p style="padding:10px;font-size:16px"> 💬 **Talk to your FastAPI app like it's a teammate.** </p>
 
-FastAPI Agent integrates an AI Agent into your FastAPI application.  
-It allows interaction with your API endpoints through a chat interface or directly via the `/agent/query` API route.
+FastAPI Agent integrates an AI Agent into your FastAPI application.
+It allows you to interact with your API endpoints through a chat interface or directly via the `/agent/query` route using an LLM (Large Language Model).
 
 ## ⚙️ Installation:
 
