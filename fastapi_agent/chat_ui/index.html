@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Chat</title>
+    <style>/*{{CSS}}*/</style>
+</head>
+
+<body class="dark">
+    <div>
+        <div style="overflow: hidden; width: 300px; margin-block: 6px; height: 70px; padding-left: 10px;">
+            <img src="{{LOGO_URL}}" style="width: 100%; height: 100%; object-fit: contain; object-position: left;">
+        </div>
+        <div class="chat-container">
+            <div class="chat-header">
+                <button class="clear-history-btn" id="clearHistoryBtn">Clear History</button>
+                <select class="theme-selector" id="themeSelector">
+                    <option value="dark">Dark</option>
+                <!--  <option value="minimal">Minimal</option> -->
+                    <option value="vibrant">Vibrant</option>
+                </select>
+                <h1>{{APP_TITLE}} Chat</h1>
+                <div class="status-indicator" id="statusIndicator"></div>
+                <div class="history-indicator" id="historyIndicator">History: 0 messages</div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <div class="message-content">
+                        👋 Hello! I'm your AI assistant. I can help you interact with {{APP_TITLE}} API queries, information and more. I'll remember our conversation context. What would you like to know?
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-content">
+                    <span>AI is thinking</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-container">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Type your message here..." 
+                        autocomplete="off"
+                    >
+                    <button id="sendButton">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>/*{{JAVASCRIPT}}*/</script>
+    
+</body>
+</html>
