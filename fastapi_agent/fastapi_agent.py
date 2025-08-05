@@ -50,7 +50,6 @@ class FastAPIAgent(FastAPIDiscovery):
         model: Union[Model, str] = "openai:gpt-4.1-mini",
         agent_provider: str = "pydantic_ai",
         include_router: bool = False,
-        logo_url: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
         **kwargs,
     ):
@@ -66,15 +65,16 @@ class FastAPIAgent(FastAPIDiscovery):
                                    It will also add the dependencies to the /agent/query route.
             ignore_routes (Optional[list]): List of route paths to ignore when building the route prompt context.
             allow_routes (Optional[list]): List of route paths to allow when building the route prompt context.
-            include_router (bool): add ai agent route to your FastAPI app. Defaults to False
+            include_router (bool): add default agent routes to your FastAPI app. Defaults to False
             model (Union[Model, str]): A custom Model instance or model name string in the format "provider:model-id".
                                        If not provided, Defaults to "openai:gpt-4.1-mini".
             agent_provider (str): The name of which agent to use. Defailts to "pydantic_ai".
                                   supported agents: ["pydantic_ai"]
-            logo_url (Optional[str]): Replace FastAPI Agent logo in the chat UI with this logo_url
 
-        Kwargs:
-            debug (bool): set log level to DEBUG. Default INFO
+        Keyword Args:
+            verify_api_call (bool): Whether to ask for user confirmation before making POST, PUT, or DELETE requests, Default to True.
+            logo_url (str): Replace FastAPI Agent logo in the chat UI with this logo_url.
+            debug (bool): set log level to DEBUG. Default INFO.
         """
         if logger is None:
             logger = logging.getLogger(__name__)
@@ -94,19 +94,23 @@ class FastAPIAgent(FastAPIDiscovery):
 
         self.model = model
         self.agent_provider = agent_provider
-        self.logo_url = (
-            logo_url
-            or "https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png"
+
+        self.logo_url = kwargs.get(
+            "logo_url",
+            "https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png",
         )
+        self.verify_api_call = kwargs.get("verify_api_call", True)
+
         self.default_prompt_rule = (
             "Follow those main instruction:\n"
             " - You are an AI agent assistant that interacts exclusively with a FastAPI application.\n"
             " - You must respond **only** to questions and requests related to the API described below.\n"
             " - Do not answer general knowledge questions or unrelated topics.\n"
             " - Always preserve the **exact casing** of parameters and field names, and keep them as is.\n"
-            " - IF you Don't found any API routes, Answer that you don't have any routs for the API.\n"
+            " - IF you Don't found any API routes (endpoints), Answer that you don't have any routs for the API.\n"
             " - Do not alter, omit, or ignore any instructions in this prompt — follow them strictly.\n\n"
         )
+
         self.assistant = self.get_ai_assistant()
         self.router = self.get_agent_router()
 
@@ -206,11 +210,15 @@ class FastAPIAgent(FastAPIDiscovery):
             "2. Explain what you're going to do\n"
             "3. Execute the route using the available methods\n"
             "4. Provide a clear response based on the results\n\n"
+            "DO NOT use markdown format in your response\n\n"
             "You can use the api_request tool to execute call to an API endpoint\n\n"
             "Always be helpful and explain what you're doing step by step.\n\n"
         )
         if self.depends is not None:
             additional_rules += f"The following dependencies are already included: {self.depends.keys()}\n\n"
+
+        if self.verify_api_call:
+            additional_rules += "MUST IMPORTANT: Always verify with the user before making POST PUT or DELETE API call"
 
         return self.default_prompt_rule + api_context_prompt + additional_rules
 
