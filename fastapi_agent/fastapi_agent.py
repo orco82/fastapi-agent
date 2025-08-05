@@ -320,8 +320,7 @@ class FastAPIAgent(FastAPIDiscovery):
             html_content = html_content.replace("/*{{JAVASCRIPT}}*/", js_content)
 
             # Replace placeholders
-            if self.logo_url:
-                html_content = html_content.replace("{{LOGO_URL}}", self.logo_url)
+            html_content = html_content.replace("{{LOGO_URL}}", self.logo_url)
             html_content = html_content.replace("{{API_BASE_URL}}", self.base_url)
             html_content = html_content.replace("{{APP_TITLE}}", self.app.title)
             if self.depends is not None:
