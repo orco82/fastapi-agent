@@ -102,7 +102,7 @@ When you integrate **FastAPI Agent** into your FastAPI application, it automatic
 ## 🧩 Additional Arguments:
 
 If your application routes use **Authorizations Depends** (e.g. Headers or Query String API key or HTTP_Bearer), you need to pass a dictionary of the authorizations.
-The agent will use them to call your routes and also apply authorizations dependencies to `/agent/query` route. (see [Additional Examples](https://github.com/orco82/fastapi-agent/blob/main/README.md#L138))
+The agent will use them to call your routes and also apply authorizations dependencies to `/agent/query` route. (see [Additional Examples](https://github.com/orco82/fastapi-agent/blob/main/README.md#-additional-examples))
 
 ```python
 api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
