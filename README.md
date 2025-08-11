@@ -11,7 +11,7 @@
 <br>
 
 FastAPI Agent integrates an AI Agent into your FastAPI application.
-It allows you to interact with your API endpoints through a chat interface or directly via the `/agent/query` route using an LLM (Large Language Model).
+It allows you to interact with your API endpoints through a chat interface or directly via an API route using an LLM (Large Language Model).
 
 ![fastapi screenshot](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-screenshot.png)
 
@@ -54,7 +54,7 @@ load_dotenv()
 app = FastAPI(
     title="YOUR APP TITLE",
     version="0.1.0",
-    description="some app description",
+    description="SOME DESCRIPTION",
 )
 
 # add routes
@@ -101,8 +101,8 @@ When you integrate **FastAPI Agent** into your FastAPI application, it automatic
 
 ## 🧩 Additional Arguments:
 
-If your application routes use **Depends** (e.g., an API key), you can pass a dictionary of headers.  
-The agent will use them to call your routes and apply the same dependencies to the `/agent/query` route.
+If your application routes use **Authorizations Depends** (e.g. Headers or Query String API key or HTTP_Bearer), you need to pass a dictionary of the authorizations.
+The agent will use them to call your routes and also apply authorizations dependencies to `/agent/query` route. (see [Additional Examples](https://github.com/orco82/fastapi-agent/blob/main/README.md#L138))
 
 ```python
 api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -111,7 +111,7 @@ FastAPIAgent(
     app,
     model="openai:gpt-4.1-mini",
     base_url="https://localhost:8000",
-    depends={"api-key": api_key},
+    auth={"api-key": API_KEY} || {'Authorization': "Bearer API_KEY"},
     include_router=True,
 )
 ```
@@ -144,7 +144,7 @@ All examples are available [here](https://github.com/orco82/fastapi-agent/blob/m
 
 ---
 
-#### If you're using *Depends* in your routes, make sure to pass the required headers when calling the `/agent/query` endpoint like in the examples below:
+#### If you're using *Authorizations Depends* in your routes, make sure to pass the required headers when calling the `/agent/query` endpoint like in the examples below:
 
 #### python
 ```python
@@ -153,7 +153,9 @@ import requests
 res = requests.post(
     "http://127.0.0.1:8000/agent/query", 
     json={"query": "show all endpoints"},
-    headers={"depends": '{"api-key": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}'}
+    headers={"auth": '{"api-key": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}'}
+    - OR - 
+    headers={"auth": '{"Authorization": "Bearer 12345678"}'}
 )
 print(res.json())
 ```
@@ -161,7 +163,9 @@ print(res.json())
 #### curl
 ```bash
 curl -k -X POST "http://127.0.0.1:8000/agent/query" \
-  -H 'depends: {"api-key": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}' \
+  -H 'auth: {"api-key": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}' \
+  - OR -
+  -H 'auth: {"Authorization": "Bearer 12345678"}' \
   -H "Content-Type: application/json" \
   -d '{"query": "show all endpoints"}'
 ```
