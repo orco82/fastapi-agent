@@ -29,7 +29,6 @@ classifiers = [
 
 dependencies = [
     "fastapi>=0.116.1",
-    "generative-ai-hub-sdk>=3.8.0",
     "httpx>=0.28.1",
     "pydantic>=2.11.7",
     "pydantic-ai>=0.4.7",

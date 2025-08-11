@@ -92,7 +92,7 @@ class ChatApp {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'depends': '{{DEPENDS}}',
+                'auth': '{{DEPENDS}}',
             },
             body: JSON.stringify({
                 query: message,

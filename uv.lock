@@ -2,14 +2,6 @@ version = 1
 requires-python = ">=3.10"
 
 [[package]]
-name = "aenum"
-version = "3.1.16"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e3/52/6ad8f63ec8da1bf40f96996d25d5b650fdd38f5975f8c813732c47388f18/aenum-3.1.16-py3-none-any.whl", hash = "sha256:9035092855a98e41b66e3d0998bd7b96280e85ceb3a04cc035636138a1943eaf", size = 165627 },
-]
-
-[[package]]
 name = "ag-ui-protocol"
 version = "0.1.8"
 source = { registry = "https://pypi.org/simple" }
@@ -19,31 +11,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/27/de/0bddf7f26d5f38274c99401735c82ad59df9cead6de42f4bb2ad837286fe/ag_ui_protocol-0.1.8.tar.gz", hash = "sha256:eb745855e9fc30964c77e953890092f8bd7d4bbe6550d6413845428dd0faac0b", size = 5323 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c4/00/40c6b0313c25d1ab6fac2ecba1cd5b15b1cd3c3a71b3d267ad890e405889/ag_ui_protocol-0.1.8-py3-none-any.whl", hash = "sha256:1567ccb067b7b8158035b941a985e7bb185172d660d4542f3f9c6fff77b55c6e", size = 7066 },
-]
-
-[[package]]
-name = "ai-api-client-sdk"
-version = "2.6.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aenum" },
-    { name = "pyhumps" },
-    { name = "requests" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/75/6c/00f615d83bdf183186d3bd33cc838deefdb8a6efcae9dae23089e5c90b81/ai_api_client_sdk-2.6.1-py3-none-any.whl", hash = "sha256:f08d3f3c4fa04630767137dbf6f7f29937d9597cd29e453aac53201b60b8fce1", size = 265514 },
-]
-
-[[package]]
-name = "ai-core-sdk"
-version = "2.6.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "ai-api-client-sdk" },
-    { name = "click" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/69/84/877beb3fbd7f6973ede56cbf8748e1f09cc70a32973279ed9b61c73e3cf4/ai_core_sdk-2.6.2-py3-none-any.whl", hash = "sha256:a9795b9c1c8469a796e606e016102ad050b40d3260892ccb8e3182e3245d324d", size = 153687 },
 ]
 
 [[package]]
@@ -372,15 +339,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dacite"
-version = "1.9.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/55/a0/7ca79796e799a3e782045d29bf052b5cde7439a2bbb17f15ff44f7aacc63/dacite-1.9.2.tar.gz", hash = "sha256:6ccc3b299727c7aa17582f0021f6ae14d5de47c7227932c47fec4cdfefd26f09", size = 22420 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/94/35/386550fd60316d1e37eccdda609b074113298f23cef5bddb2049823fe666/dacite-1.9.2-py3-none-any.whl", hash = "sha256:053f7c3f5128ca2e9aceb66892b1a3c8936d02c686e707bee96e19deef4bc4a0", size = 16600 },
-]
-
-[[package]]
 name = "distro"
 version = "1.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -429,7 +387,6 @@ name = "fastapi-agent"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "generative-ai-hub-sdk" },
     { name = "httpx" },
     { name = "pydantic" },
     { name = "pydantic-ai" },
@@ -439,7 +396,6 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.116.1" },
-    { name = "generative-ai-hub-sdk", specifier = ">=3.8.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-ai", specifier = ">=0.4.7" },
@@ -593,23 +549,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/8b/02/0835e6ab9cfc03916fe3f78c0956cfcdb6ff2669ffa6651065d5ebf7fc98/fsspec-2025.7.0.tar.gz", hash = "sha256:786120687ffa54b8283d942929540d8bc5ccfa820deb555a2b5d0ed2b737bf58", size = 304432 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2f/e0/014d5d9d7a4564cf1c40b5039bc882db69fd881111e03ab3657ac0b218e2/fsspec-2025.7.0-py3-none-any.whl", hash = "sha256:8b012e39f63c7d5f10474de957f3ab793b47b45ae7d39f2fb735f8bbe25c0e21", size = 199597 },
-]
-
-[[package]]
-name = "generative-ai-hub-sdk"
-version = "3.8.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "ai-core-sdk" },
-    { name = "click" },
-    { name = "dacite" },
-    { name = "openai" },
-    { name = "overloading" },
-    { name = "packaging" },
-    { name = "pydantic" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/ce/eac7c9bd54049ff643bd9d780e43b0c9ae892eeffc4bb54f149d76c9ddae/generative_ai_hub_sdk-3.8.0-py3-none-any.whl", hash = "sha256:e14e83775f7dfe0f442ecf5654f38df2305211b312715be2d83b3e2830f8df81", size = 352978 },
 ]
 
 [[package]]
@@ -1091,15 +1030,6 @@ wheels = [
 ]
 
 [[package]]
-name = "overloading"
-version = "0.5.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/19/6c/dbc5ddff9eec6b57046c11985d28ebac2f8073596a7cc903c76f26856284/overloading-0.5.0.tar.gz", hash = "sha256:493f0f67211244ed6bf2acf9f3ac61fb38e8aa87834c4f0f84d8943512066588", size = 11088 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3b/d1/775dec1fb1e2a600d587adfef9aafba7b0b995532b3bc63a5a927446a8ce/overloading-0.5.0-py3-none-any.whl", hash = "sha256:c28d2a227cfb6bdefcfe0ded055bc620a5c784a52ecadc441f8d6c281b8bb1c1", size = 10991 },
-]
-
-[[package]]
 name = "packaging"
 version = "23.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1465,15 +1395,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b0140bde72ea885a803b82086995367bf2037de0159d924/pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887", size = 4968631 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217 },
-]
-
-[[package]]
-name = "pyhumps"
-version = "3.8.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c4/83/fa6f8fb7accb21f39e8f2b6a18f76f6d90626bdb0a5e5448e5cc9b8ab014/pyhumps-3.8.0.tar.gz", hash = "sha256:498026258f7ee1a8e447c2e28526c0bea9407f9a59c03260aee4bd6c04d681a3", size = 9018 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/11/a1938340ecb32d71e47ad4914843775011e6e9da59ba1229f181fef3119e/pyhumps-3.8.0-py3-none-any.whl", hash = "sha256:060e1954d9069f428232a1adda165db0b9d8dfdce1d265d36df7fbff540acfd6", size = 6095 },
 ]
 
 [[package]]

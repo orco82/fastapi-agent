@@ -1,14 +1,15 @@
 import inspect
 import json
 import logging
-import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union  # noqa: F401
 
 import httpx
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.routing import APIRoute
 from pydantic import BaseModel
+
+from .fastapi_auth import AuthenticationDetector
 
 
 class RouteInfo(BaseModel):
@@ -22,10 +23,10 @@ class RouteInfo(BaseModel):
     request_body: Optional[Dict[str, Any]]
     response_model: Optional[Dict[str, Any]]
     tags: List[str]
-    headers: Optional[Union[Dict[str, Any], List]] = None
+    dependencies: Any
 
 
-class FastAPIDiscovery:
+class FastAPIDiscovery(AuthenticationDetector):
     """
     Discovery routes, sechmas, and other information from FastAPI application
 
@@ -33,8 +34,8 @@ class FastAPIDiscovery:
         app (FastAPI): The FastAPI application instance to extract route information from.
         base_url (str): The base URL of the FastAPI application for documentation and interaction.
                         Defaults to "http://localhost:8000".
-        depends (Optional[dict]): Optional dictionary of dependencies or external components relevant to the API.
-                                Support for API with token keys passed in the Headers.
+        auth (Optional[dict]): Optional dictionary of dependencies auth or external components relevant to the API.
+                               Support for all kind of authorizations.
         ignore_routes (Optional[list]): List of route paths to ignore when building the route prompt context.
         allow_routes (Optional[list]): List of route paths to allow when building the route prompt context.
     """
@@ -43,15 +44,15 @@ class FastAPIDiscovery:
         self,
         app: FastAPI,
         base_url: str = "http://localhost:8000",
-        depends: Optional[dict] = None,
+        auth: Optional[dict] = None,
         ignore_routes: Optional[list] = None,
         allow_routes: Optional[list] = None,
         logger: Optional[logging.Logger] = None,
     ):
+        super().__init__(app=app)
         self.app = app
         self.base_url = base_url.rstrip("/")
-        self.depends = depends
-        self.header_depends = {}
+        self.depends = auth
         self.ignore_routes = ignore_routes or []
         self.allow_routes = allow_routes or []
 
@@ -82,23 +83,9 @@ class FastAPIDiscovery:
                 if self.allow_routes and not any(mp in self.allow_routes for mp in method_path):
                     continue
 
-                # if route.path in self.ignore_routes:
-                #     continue
-
-                # if self.allow_routes and route.path not in self.allow_routes:
-                #     continue
-
                 route_info = self._extract_route_info(route)
                 if route_info:
                     self.routes_info.append(route_info)
-
-                if self.depends:
-                    for depends in self.depends:
-                        if re.sub(r"[-_]", " ", depends) in [
-                            re.sub(r"[-_]", " ", d.name) for d in route_info.headers
-                        ]:
-                            self.header_depends.update({depends: self.depends[depends]})
-                        # TODO: add support for other depends like qurey
 
     def _extract_route_info(self, route: APIRoute) -> Optional[RouteInfo]:
         """Extract detailed information from a FastAPI route"""
@@ -115,11 +102,6 @@ class FastAPIDiscovery:
             parameters = {}
             request_body = None
 
-            headers = []
-            for depend in route.dependant.dependencies:
-                for header in depend.header_params:
-                    headers.append(header)
-
             for param_name, param in sig.parameters.items():
                 if param_name in ["request", "response"]:
                     continue
@@ -127,35 +109,33 @@ class FastAPIDiscovery:
                 if "BackgroundTasks" in str(param.annotation):
                     continue
 
-                # check if param is not Depends and not in the header_params
-                if not (
-                    "Depends" in str(param.default)
-                    and param_name in [h.name for h in headers]
-                ):
-                    param_info = {
-                        "type": str(param.annotation)
-                        if param.annotation != param.empty
-                        else "Any",
-                        "required": param.default == param.empty,
-                        "default": str(param.default)
-                        if param.default != param.empty
-                        else None,
-                    }
+                param_info = {
+                    "type": str(param.annotation)
+                    if param.annotation != param.empty
+                    else "Any",
+                    "required": param.default == param.empty,
+                    "default": str(param.default)
+                    if param.default != param.empty
+                    else None,
+                }
 
-                    # Check if this is a request body (Pydantic model)
-                    if (
-                        param.annotation != param.empty
-                        and hasattr(param.annotation, "__bases__")
-                        and BaseModel in param.annotation.__bases__
-                    ):
-                        request_body = self._get_pydantic_schema(param.annotation)
-                    else:
-                        parameters[param_name] = param_info
+                # Check if this is a request body (Pydantic model)
+                if (
+                    param.annotation != param.empty
+                    and hasattr(param.annotation, "__bases__")
+                    and BaseModel in param.annotation.__bases__
+                ):
+                    request_body = self._get_pydantic_schema(param.annotation)
+                else:
+                    parameters[param_name] = param_info
 
             # Get response model info
             response_model = None
             if route.response_model:
                 response_model = self._get_pydantic_schema(route.response_model)
+
+            # get route dependencies for route
+            route_depends = self._analyze_route_auth(route)
 
             return RouteInfo(
                 path=route.path,
@@ -166,7 +146,7 @@ class FastAPIDiscovery:
                 request_body=request_body,
                 response_model=response_model,
                 tags=route.tags or [],
-                headers=headers,
+                dependencies=route_depends
             )
         except Exception as e:
             self.logger.error(f"failed extracting route info for {route.path}: {e}")
@@ -216,8 +196,8 @@ class FastAPIDiscovery:
                     f"Response Model: {json.dumps(route.response_model, indent=2)}\n"
                 )
 
-            if route.headers:
-                summary += f"Hadears: {route.headers}\n"
+            if route.dependencies:
+                summary += f"Dependencies: {route.dependencies}\n"
 
             if route.tags:
                 summary += f"Tags: {', '.join(route.tags)}\n"
@@ -239,14 +219,24 @@ class FastAPIDiscovery:
 
     async def execute_route(self, method: str, path: str, **kwargs) -> Dict[str, Any]:
         """Execute a route with given parameters"""
-        url = f"{self.base_url}{path}"
-        headers_data = kwargs.pop("header", {})
-        headers_data.update(self.header_depends)
-        json_data = kwargs.pop("data", None)
 
+        # build headers or params with auth (self.depends) base on auth_type
+        headers_data = {}
+        if "NONE" in str(self.detected_auth.auth_type):
+            pass
+        elif self.detected_auth.header_name or "HTTP_BEARER" in str(self.detected_auth.auth_type):
+            headers_data = kwargs.pop("header", {})
+            headers_data.update(self.depends)
+        else:
+            kwargs.pop("header", {})
+            for k, v in self.depends.items():
+                kwargs[k] = v
+
+        url = f"{self.base_url}{path}"
+        json_data = kwargs.pop("data", None)
         self.logger.debug(f" URL: {url}")
         self.logger.debug(f" Method: {method}")
-        self.logger.debug(f" Header Depends: {self.header_depends}")
+        self.logger.debug(f" Auth: {self.depends} - {self.detected_auth.auth_type}")
         self.logger.debug(f" Headers: {headers_data}")
         self.logger.debug(f" Data: {json_data}")
         self.logger.debug(f" Params: {kwargs}")

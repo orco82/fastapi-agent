@@ -10,7 +10,7 @@
 
 <br>
 
-FastAPI Agent integrates an AI Agent into your FastAPI application.
+FastAPI Agent integrates an AI Agent into your FastAPI application.<br>
 It allows you to interact with your API endpoints through a chat interface or directly via an API route using an LLM (Large Language Model).
 
 ![fastapi screenshot](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-screenshot.png)
@@ -90,7 +90,7 @@ curl -k -X POST "http://127.0.0.1:8000/agent/query" \
 
 2. **`/agent/chat`** – A simple web-based chat interface to interact with your API. 💬
 
-> #### 💡 You can also add custom routes using agent.chat() method - [Example](https://github.com/orco82/fastapi-agent/blob/main/examples/3_fastapi_agent_example.py)
+#### 💡 You can also add custom routes using agent.chat() method - [Example](https://github.com/orco82/fastapi-agent/blob/main/examples/3_fastapi_agent_example.py)
  
 
 ## 💬 AI Chat - Web UI
@@ -101,7 +101,7 @@ When you integrate **FastAPI Agent** into your FastAPI application, it automatic
 
 ## 🧩 Additional Arguments:
 
-If your application routes use **Authorizations Depends** (e.g. Headers or Query String API key or HTTP_Bearer), you need to pass a dictionary of the authorizations.
+If your application routes use **Authorizations Depends** (e.g. Headers or Query String API key or HTTP_Bearer), you need to pass a dictionary of the authorizations.<br>
 The agent will use them to call your routes and also apply authorizations dependencies to `/agent/query` route. (see [Additional Examples](https://github.com/orco82/fastapi-agent/blob/main/README.md#-additional-examples))
 
 ```python

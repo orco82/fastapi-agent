@@ -44,7 +44,7 @@ class FastAPIAgent(FastAPIDiscovery):
         self,
         app: FastAPI,
         base_url: str = "http://localhost:8000",
-        depends: Optional[dict] = None,
+        auth: Optional[dict] = None,
         ignore_routes: Optional[list] = None,
         allow_routes: Optional[list] = None,
         model: Union[Model, str] = "openai:gpt-4.1-mini",
@@ -60,8 +60,8 @@ class FastAPIAgent(FastAPIDiscovery):
             app (FastAPI): The FastAPI application instance to extract route information from.
             base_url (str): The base URL of the FastAPI application for documentation and interaction.
                             Defaults to "http://localhost:8000".
-            depends (Optional[dict]): Optional dictionary of dependencies or external components relevant to the API.
-                                   Support for API with token keys passed in the Headers.
+            auth (Optional[dict]): Optional dictionary of dependencies auth or external components relevant to the API.
+                                   Support for all kind of authorizations.
                                    It will also add the dependencies to the /agent/query route.
             ignore_routes (Optional[list]): List of route paths to ignore when building the route prompt context.
             allow_routes (Optional[list]): List of route paths to allow when building the route prompt context.
@@ -78,15 +78,22 @@ class FastAPIAgent(FastAPIDiscovery):
         """
         if logger is None:
             logger = logging.getLogger(__name__)
-            logger.addHandler(logging.NullHandler())
+            if not logger.handlers:
+                handler = logging.StreamHandler()
+                handler.setFormatter(logging.Formatter(
+                    "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+                ))
+                logger.addHandler(handler)
             if kwargs.get("debug", False):
-                logger.setLevel("DEBUG")
+                logger.setLevel(logging.DEBUG)
+            else:
+                logger.setLevel(logging.INFO)
         self.logger = logger
 
         super().__init__(
             app=app,
             base_url=base_url,
-            depends=depends,
+            auth=auth,
             ignore_routes=ignore_routes,
             allow_routes=allow_routes,
             logger=self.logger,
@@ -215,10 +222,16 @@ class FastAPIAgent(FastAPIDiscovery):
             "Always be helpful and explain what you're doing step by step.\n\n"
         )
         if self.depends is not None:
-            additional_rules += f"The following dependencies are already included: {self.depends.keys()}\n\n"
+            additional_rules += (
+                f"The following dependencies are already included: {self.depends.keys()}\n"
+                "Do not ask for any authorization!\n"
+                "Set the headers from dependncies.\n\n"
+            )
 
         if self.verify_api_call:
             additional_rules += "MUST IMPORTANT: Always verify with the user before making POST PUT or DELETE API call"
+        else:
+            additional_rules += "You don't need to verify with the user before making any API call"
 
         return self.default_prompt_rule + api_context_prompt + additional_rules
 
@@ -240,9 +253,9 @@ class FastAPIAgent(FastAPIDiscovery):
     #         # allow_headers=["*"],
     #     )
 
-    async def verify_dependencies(self, depends: str = Header(...)):
+    async def verify_dependencies(self, auth: str = Header(...)):
         self.logger.info("checking dependencies...")
-        _depends = json.loads(depends)
+        _depends = json.loads(auth)
         if _depends != self.depends:
             raise HTTPException(
                 status_code=401, detail=f"Could not validate {_depends}"
@@ -255,7 +268,7 @@ class FastAPIAgent(FastAPIDiscovery):
 
             @agent_router.post("/query", response_model=AgentResponse)
             async def query_ai_agent(
-                request: AgentQuery, depends: str = Depends(self.verify_dependencies)
+                request: AgentQuery, auth: str = Depends(self.verify_dependencies)
             ):
                 """
                 Ask the AI agent about available API endpoints and how to use them.
