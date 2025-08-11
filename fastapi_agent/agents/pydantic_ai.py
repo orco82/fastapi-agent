@@ -36,7 +36,7 @@ class PydanticAIAgent(BaseAgent):
 
     def initialize_agent(self):
         """Create the agent with system prompt and model"""
-        self.logger.info(f"initialzing agent with {self.model.__class__}")
+        self.logger.info(f"initialzing agent with {self.model if isinstance(self.model, str) else self.model.__class__}")
         return Agent(
             model=self.model,
             system_prompt=self.prompt,
