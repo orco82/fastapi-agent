@@ -1,3 +1,34 @@
+<p align="center">
+  <!-- GitHub metrics -->
+  <!--
+  <a href="https://github.com/orco82/fastapi-agent">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/orco82/fastapi-agent?style=for-the-badge&logo=github">
+  </a>
+  <a href="https://github.com/orco82/fastapi-agent/network/members">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/orco82/fastapi-agent?style=for-the-badge">
+  </a>
+  <a href="https://github.com/orco82/fastapi-agent/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/orco82/fastapi-agent?style=for-the-badge">
+  </a>
+  <a href="https://github.com/orco82/fastapi-agent/blob/main/LICENSE">
+    <img alt="GitHub license" src="https://img.shields.io/github/license/orco82/fastapi-agent?style=for-the-badge">
+  </a>
+  <a href="https://github.com/orco82/fastapi-agent/commits/main">
+    <img alt="Last commit" src="https://img.shields.io/github/last-commit/orco82/fastapi-agent?style=for-the-badge">
+  </a>
+  -->
+  
+  <!-- PyPI metrics -->
+  <!--
+  <a href="https://pypi.org/project/fastapi-agent/">
+    <img alt="PyPI version" src="https://img.shields.io/pypi/v/fastapi-agent?style=for-the-badge&logo=pypi">
+  </a>
+  <a href="https://pypi.org/project/fastapi-agent/">
+    <img alt="PyPI downloads" src="https://img.shields.io/pypi/dm/fastapi-agent?style=for-the-badge">
+  </a>
+  -->
+</p>
+
 <div align="denter">
 
 ![FastAPI Agent Logo](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png)
