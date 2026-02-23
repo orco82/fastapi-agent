@@ -1,6 +1,6 @@
 <p align="center">
   <!-- GitHub metrics -->
-  <!--
+
   <a href="https://github.com/orco82/fastapi-agent">
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/orco82/fastapi-agent?style=for-the-badge&logo=github">
   </a>
@@ -16,20 +16,20 @@
   <a href="https://github.com/orco82/fastapi-agent/commits/main">
     <img alt="Last commit" src="https://img.shields.io/github/last-commit/orco82/fastapi-agent?style=for-the-badge">
   </a>
-  -->
+  
   
   <!-- PyPI metrics -->
-  <!--
+  
   <a href="https://pypi.org/project/fastapi-agent/">
     <img alt="PyPI version" src="https://img.shields.io/pypi/v/fastapi-agent?style=for-the-badge&logo=pypi">
   </a>
   <a href="https://pypi.org/project/fastapi-agent/">
     <img alt="PyPI downloads" src="https://img.shields.io/pypi/dm/fastapi-agent?style=for-the-badge">
   </a>
-  -->
+  
 </p>
 
-<div align="denter">
+<div align="center">
 
 ![FastAPI Agent Logo](https://raw.githubusercontent.com/orco82/fastapi-agent/main/assets/fastapi-agent-1.png)
 
@@ -201,6 +201,35 @@ curl -k -X POST "http://127.0.0.1:8000/agent/query" \
   -d '{"query": "show all endpoints"}'
 ```
 
+
+## 🧪 Development & Testing
+
+FastAPI Agent includes a comprehensive test suite to ensure reliability and quality.
+
+### Running Tests
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Run all tests
+pytest
+
+# Run with coverage report
+pytest --cov=fastapi_agent --cov-report=term-missing
+
+# Run specific test file
+pytest tests/test_auth.py
+
+# Generate HTML coverage report
+pytest --cov=fastapi_agent --cov-report=html
+```
+
+### Test Coverage
+
+- **77 tests** covering authentication detection, route discovery, and agent orchestration
+- **79% overall coverage** with critical components at 80%+ coverage
+- All external dependencies (LLM calls, HTTP requests) are mocked for fast, reliable tests
 
 ## 📜 License
 

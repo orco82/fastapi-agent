@@ -29,3 +29,10 @@ venv.bak/
 
 .DS_Store
 *.txt
+
+# Testing
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+*.cover

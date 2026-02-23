@@ -28,11 +28,19 @@ classifiers = [
 ]
 
 dependencies = [
-    "fastapi>=0.116.1",
+    "fastapi>=0.116.1,<1.0.0",
     "httpx>=0.28.1",
     "pydantic>=2.11.7",
     "pydantic-ai>=0.4.7",
     "uvicorn>=0.35.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
 ]
 
 [project.urls]
@@ -57,4 +65,18 @@ ignore = [
     "C901",  # is too compex.
     "B904",  # raise without from inside except
     "B008",  # do not perform function calls in argument defaults.
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--cov=fastapi_agent",
+    "--cov-report=term-missing",
+    "--cov-report=html",
 ]
